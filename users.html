@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Admin Dashboard</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Ionicons for Icons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="light-mode">
+    <div class="container">
+        <!-- Navigation / Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="icon"><ion-icon name="logo-bitcoin"></ion-icon></span>
+                <span class="title">Blackgold</span>
+            </div>
+
+            <ul>
+                <li>
+                    <a href="dashboard.html">
+                        <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
+                        <span class="title">Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="users.html">
+                        <span class="icon"><ion-icon name="people-outline"></ion-icon></span>
+                        <span class="title">Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="orders.html">
+                        <span class="icon"><ion-icon name="cart-outline"></ion-icon></span>
+                        <span class="title">Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="products.html">
+                        <span class="icon"><ion-icon name="cube-outline"></ion-icon></span>
+                        <span class="title">Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="messages.html">
+                        <span class="icon"><ion-icon name="chatbubble-outline"></ion-icon></span>
+                        <span class="title">Messages</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
+                        <span class="title">Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="login.html" id="logoutBtn">
+                        <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
+                        <span class="title">Sign Out</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+
+                <div class="search">
+                    <label>
+                        <input type="text" placeholder="Search users...">
+                        <ion-icon name="search-outline"></ion-icon>
+                    </label>
+                </div>
+
+                <div class="top-right">
+                    <div class="theme-toggle" id="themeScan">
+                        <ion-icon name="moon-outline"></ion-icon>
+                    </div>
+                    <div class="user">
+                        <img src="https://ui-avatars.com/api/?name=User&background=random" id="userAvatar" alt="User">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Users Content -->
+            <div class="details" style="grid-template-columns: 1fr;">
+                <div class="recentOrders">
+                    <div class="cardHeader">
+                        <h2>User Management</h2>
+                        <a href="#" class="btn">Add New User</a>
+                    </div>
+                    <div class="table-controls">
+                        <input type="text" placeholder="Filter by name, email, or role...">
+                        <button>Export CSV</button>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>User</td>
+                                <td>Email</td>
+                                <td>Role</td>
+                                <td>Status</td>
+                                <td>Actions</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="imgBx"
+                                        style="width: 35px; height: 35px; border-radius: 50%; overflow: hidden;"><img
+                                            src="https://ui-avatars.com/api/?name=John+Doe"
+                                            style="width:100%; height:100%; object-fit:cover;"></div>
+                                    John Doe
+                                </td>
+                                <td>john@example.com</td>
+                                <td>Admin</td>
+                                <td><span class="status delivered">Active</span></td>
+                                <td><ion-icon name="create-outline"></ion-icon> <ion-icon name="trash-outline"
+                                        style="color: var(--danger);"></ion-icon></td>
+                            </tr>
+                            <tr>
+                                <td style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="imgBx"
+                                        style="width: 35px; height: 35px; border-radius: 50%; overflow: hidden;"><img
+                                            src="https://ui-avatars.com/api/?name=Sarah+Smith"
+                                            style="width:100%; height:100%; object-fit:cover;"></div>
+                                    Sarah Smith
+                                </td>
+                                <td>sarah@example.com</td>
+                                <td>Editor</td>
+                                <td><span class="status pending">Pending</span></td>
+                                <td><ion-icon name="create-outline"></ion-icon> <ion-icon name="trash-outline"
+                                        style="color: var(--danger);"></ion-icon></td>
+                            </tr>
+                            <tr>
+                                <td style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="imgBx"
+                                        style="width: 35px; height: 35px; border-radius: 50%; overflow: hidden;"><img
+                                            src="https://ui-avatars.com/api/?name=Mike+Ross"
+                                            style="width:100%; height:100%; object-fit:cover;"></div>
+                                    Mike Ross
+                                </td>
+                                <td>mike@example.com</td>
+                                <td>Viewer</td>
+                                <td><span class="status return">Inactive</span></td>
+                                <td><ion-icon name="create-outline"></ion-icon> <ion-icon name="trash-outline"
+                                        style="color: var(--danger);"></ion-icon></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

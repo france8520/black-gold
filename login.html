@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 50px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3rem;
+            color: #6366F1;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #F8FAFC;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        p {
+            color: #94A3B8;
+            margin-bottom: 40px;
+            font-size: 1rem;
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: #fff;
+            color: #1f1f1f;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .google-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .google-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .divider {
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #64748B;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #334155;
+        }
+
+        #g_id_onload {
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: #EF4444;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .features {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94A3B8;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            color: #6366F1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="logo">🚀</div>
+        <h1>Welcome Back</h1>
+        <p>Sign in to access your dashboard</p>
+
+        <!-- Google Sign-In Button Container -->
+        <!-- IMPORTANT: You must replace 'YOUR_GOOGLE_CLIENT_ID' with your actual ID from Google Cloud Console -->
+        <!-- https://console.cloud.google.com/apis/credentials -->
+        <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-callback="handleCredentialResponse"
+            data-auto_prompt="false">
+        </div>
+
+        <div id="buttonDiv"></div>
+
+        <!-- Custom styled button as fallback -->
+        <button class="google-btn" id="customGoogleBtn" style="display: none;">
+            <img src="https://www.google.com/favicon.ico" alt="Google">
+            Sign in with Google
+        </button>
+
+        <!-- Dev Bypass Button (For testing without valid Google ID) -->
+        <div class="divider">
+            <span>OR</span>
+        </div>
+        <button onclick="devLogin()"
+            style="width: 100%; padding: 12px; background: #334155; color: #fff; border: 1px dashed #64748B; border-radius: 12px; cursor: pointer;">
+            🚧 Dev Mode: Bypass Login
+        </button>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="features">
+            <div class="feature">
+                <svg class="feature-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <span>Secure authentication with Google</span>
+            </div>
+            <div class="feature">
+                <svg class="feature-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <span>Real-time data analytics</span>
+            </div>
+            <div class="feature">
+                <svg class="feature-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <span>Modern responsive design</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Identity Services Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        // Initialize Google Sign-In
+        window.onload = function () {
+            renderGoogleButton();
+        };
+
+        function renderGoogleButton() {
+            // NOTE: Replace 'YOUR_GOOGLE_CLIENT_ID' with your actual Client ID
+            google.accounts.id.initialize({
+                client_id: 'YOUR_GOOGLE_CLIENT_ID',
+                callback: handleCredentialResponse,
+                auto_select: false,
+                cancel_on_tap_outside: true
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('buttonDiv'),
+                {
+                    theme: 'filled_blue',
+                    size: 'large',
+                    width: '100%',
+                    text: 'signin_with',
+                    shape: 'rectangular',
+                    logo_alignment: 'left'
+                }
+            );
+        }
+
+        function devLogin() {
+            const user = {
+                id: 'dev_user_123',
+                email: 'dev@example.com',
+                name: 'Developer Mode',
+                picture: ''
+            };
+            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'dashboard.html';
+        }
+
+        function handleCredentialResponse(response) {
+            // Decode the JWT credential
+            const credential = response.credential;
+            const payload = parseJwt(credential);
+
+            console.log('User signed in:', payload);
+
+            // Store user info in localStorage
+            const user = {
+                id: payload.sub,
+                email: payload.email,
+                name: payload.name,
+                picture: payload.picture
+            };
+
+            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('isLoggedIn', 'true');
+
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        }
+
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                console.error('Error parsing JWT:', error);
+                showError('Authentication error. Please try again.');
+                return null;
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+
+</html>
