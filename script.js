@@ -602,3 +602,114 @@ if (notificationList) {
     updateBadge();
 }
 
+// ================== Universal Table Sorting System ==================
+function initTableSorting() {
+    // Find all tables with sortable headers
+    const tables = document.querySelectorAll('table');
+
+    tables.forEach(table => {
+        const sortableHeaders = table.querySelectorAll('th.sortable, td.sortable');
+
+        if (sortableHeaders.length === 0) return;
+
+        const tbody = table.querySelector('tbody');
+        if (!tbody) return;
+
+        // Track current sort state for this table
+        let currentSortColumn = null;
+        let currentSortDirection = 'asc';
+
+        sortableHeaders.forEach(header => {
+            // Make header clickable
+            header.style.cursor = 'pointer';
+            header.style.userSelect = 'none';
+            header.style.position = 'relative';
+
+            // Add sort indicator container
+            if (!header.querySelector('.sort-indicator')) {
+                const indicator = document.createElement('span');
+                indicator.className = 'sort-indicator';
+                indicator.innerHTML = ' ↕';
+                indicator.style.opacity = '0.3';
+                indicator.style.marginLeft = '5px';
+                header.appendChild(indicator);
+            }
+
+            header.addEventListener('click', () => {
+                const column = header.getAttribute('data-column');
+
+                // Toggle direction if clicking same column
+                if (currentSortColumn === column) {
+                    currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSortColumn = column;
+                    currentSortDirection = 'asc';
+                }
+
+                // Update visual indicators
+                sortableHeaders.forEach(h => {
+                    const ind = h.querySelector('.sort-indicator');
+                    if (ind) {
+                        if (h === header) {
+                            ind.innerHTML = currentSortDirection === 'asc' ? ' ▲' : ' ▼';
+                            ind.style.opacity = '1';
+                        } else {
+                            ind.innerHTML = ' ↕';
+                            ind.style.opacity = '0.3';
+                        }
+                    }
+                });
+
+                // Get all rows
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                // Sort rows
+                rows.sort((a, b) => {
+                    const cellA = getCellByColumn(a, column, table);
+                    const cellB = getCellByColumn(b, column, table);
+
+                    let valueA = cellA ? cellA.textContent.trim() : '';
+                    let valueB = cellB ? cellB.textContent.trim() : '';
+
+                    // Try to parse as number (handle currency and commas)
+                    const numA = parseFloat(valueA.replace(/[$,]/g, ''));
+                    const numB = parseFloat(valueB.replace(/[$,]/g, ''));
+
+                    let comparison = 0;
+
+                    if (!isNaN(numA) && !isNaN(numB)) {
+                        // Numeric comparison
+                        comparison = numA - numB;
+                    } else {
+                        // String comparison
+                        comparison = valueA.localeCompare(valueB);
+                    }
+
+                    return currentSortDirection === 'asc' ? comparison : -comparison;
+                });
+
+                // Re-append rows in sorted order
+                rows.forEach(row => tbody.appendChild(row));
+            });
+        });
+    });
+}
+
+// Helper function to get cell by column name
+function getCellByColumn(row, columnName, table) {
+    const headers = Array.from(table.querySelectorAll('thead th, thead td'));
+    const columnIndex = headers.findIndex(h => h.getAttribute('data-column') === columnName);
+
+    if (columnIndex === -1) return null;
+
+    const cells = row.querySelectorAll('td');
+    return cells[columnIndex] || null;
+}
+
+// Initialize sorting when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTableSorting);
+} else {
+    initTableSorting();
+}
+

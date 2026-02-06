@@ -164,16 +164,15 @@
                     </div>
                     <div class="table-controls">
                         <input type="text" id="tableSearch" placeholder="Filter orders...">
-                        <button id="sortBtn">Sort by Price</button>
                     </div>
 
                     <table>
                         <thead>
                             <tr>
-                                <td>Name</td>
-                                <td>Price</td>
-                                <td>Payment</td>
-                                <td>Status</td>
+                                <td class="sortable" data-column="name">Name</td>
+                                <td class="sortable" data-column="price">Price</td>
+                                <td class="sortable" data-column="payment">Payment</td>
+                                <td class="sortable" data-column="status">Status</td>
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody">
