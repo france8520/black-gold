@@ -175,62 +175,154 @@ if (tableBody) {
 }
 
 // ================== Simple Chart Implementation (Canvas) ==================
+// ================== Curved Area Chart Implementation ==================
 const canvas = document.getElementById('myChart');
+const ctx = canvas ? canvas.getContext('2d') : null;
+let chartData = [5, 9, 7, 12, 8, 14, 10, 16, 11, 15, 13, 17]; // 12 months of sample data
+
+// Set canvas size
 if (canvas) {
-    const ctx = canvas.getContext('2d');
-    canvas.width = 600;
+    canvas.width = canvas.parentElement.offsetWidth;
     canvas.height = 300;
+}
 
-    let chartData = [12, 19, 3, 5, 2, 3, 10, 15, 8, 12, 6, 14];
+window.drawChart = function () {
+    if (!canvas || !ctx) return; // Exit if canvas not found
 
-    window.drawChart = function () { // Expose to window for theme toggler
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = 50; // Increased padding for labels
 
+    ctx.clearRect(0, 0, width, height);
+
+    // Define Theme Colors
+    const isLight = document.body.classList.contains('light-mode');
+    const gridColor = isLight ? '#e2e8f0' : '#334155';
+    const axisColor = isLight ? '#94a3b8' : '#64748b';
+    const textColor = isLight ? '#64748b' : '#94a3b8';
+    const lineColor = isLight ? '#6366f1' : '#06b6d4'; // Indigo/Cyan
+
+    // --- 1. Draw Grid Lines & Y-Axis Labels ---
+    const rows = 5;
+    const yMax = 20; // Max revenue value (assumed or calculated)
+
+    ctx.strokeStyle = gridColor;
+    ctx.lineWidth = 1;
+    ctx.font = '11px Inter';
+    ctx.fillStyle = textColor;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+
+    // Draw horizontal grid lines and Y labels
+    for (let i = 0; i <= rows; i++) {
+        const y = padding + ((height - 2 * padding) / rows) * i;
+        const yValue = Math.round(yMax - (yMax / rows) * i);
+
+        // Grid Line
         ctx.beginPath();
-        ctx.strokeStyle = document.body.classList.contains('light-mode') ? '#e2e8f0' : '#334155';
-        ctx.lineWidth = 1;
-        for (let i = 0; i < 5; i++) {
-            let y = (canvas.height / 5) * i + 20;
-            ctx.moveTo(40, y);
-            ctx.lineTo(canvas.width, y);
-        }
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
         ctx.stroke();
 
-        const barWidth = 30;
-        const spacing = 15;
-        const startX = 50;
-        const maxVal = 20;
-
-        chartData.forEach((val, index) => {
-            const x = startX + (index * (barWidth + spacing));
-            const barHeight = (val / maxVal) * (canvas.height - 40);
-            const y = canvas.height - barHeight - 20;
-
-            let gradient = ctx.createLinearGradient(x, y, x, y + barHeight);
-
-            if (document.body.classList.contains('light-mode')) {
-                gradient.addColorStop(0, '#4F46E5');
-                gradient.addColorStop(1, '#6366F1');
-            } else {
-                gradient.addColorStop(0, '#06B6D4');
-                gradient.addColorStop(1, '#6366F1');
-            }
-
-            ctx.fillStyle = gradient;
-            ctx.fillRect(x, y, barWidth, barHeight);
-
-            ctx.fillStyle = document.body.classList.contains('light-mode') ? '#64748B' : '#94A3B8';
-            ctx.font = '12px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText(val, x + barWidth / 2, y - 5);
-        });
+        // Y Label
+        ctx.fillText(yValue, padding - 10, y);
     }
 
-    drawChart();
+    // Y-Axis Title
+    ctx.save();
+    ctx.translate(15, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText("Revenue ($k)", 0, 0);
+    ctx.restore();
 
-    window.updateChartData = function () {
-        chartData.shift();
-        chartData.push(getRandomInt(2, 18));
-        drawChart();
+    // --- 2. Calculate coordinates for Spline ---
+    const dataPoints = chartData.map((val, index) => {
+        const x = padding + (index * (width - 2 * padding) / (chartData.length - 1));
+        const y = padding + (height - 2 * padding) * (1 - val / yMax);
+        return { x, y };
+    });
+
+    // --- 3. Draw Gradient Fill (Area) ---
+    ctx.beginPath();
+    ctx.moveTo(dataPoints[0].x, height - padding); // Start bottom-left
+    ctx.lineTo(dataPoints[0].x, dataPoints[0].y); // Move to first point
+
+    // Draw curved lines (Catmull-Rom or simple Bezier midpoint approximation)
+    for (let i = 0; i < dataPoints.length - 1; i++) {
+        const p0 = dataPoints[i];
+        const p1 = dataPoints[i + 1];
+        // Midpoint control smoothing
+        const midX = (p0.x + p1.x) / 2;
+        ctx.quadraticCurveTo(p0.x, p0.y, midX, (p0.y + p1.y) / 2);
+        ctx.quadraticCurveTo(midX, (p0.y + p1.y) / 2, p1.x, p1.y);
     }
+
+    ctx.lineTo(dataPoints[dataPoints.length - 1].x, height - padding); // Line to bottom-right
+    ctx.closePath();
+
+    // Create Gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    if (isLight) {
+        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)'); // Indigo low opacity
+        gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+    } else {
+        gradient.addColorStop(0, 'rgba(6, 182, 212, 0.4)'); // Cyan low opacity
+        gradient.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
+    }
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // --- 4. Draw Line Stroke (Top Edge) ---
+    ctx.beginPath();
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 3;
+    ctx.moveTo(dataPoints[0].x, dataPoints[0].y);
+
+    // Same smooth curve logic for stroke
+    for (let i = 0; i < dataPoints.length - 1; i++) {
+        const p0 = dataPoints[i];
+        const p1 = dataPoints[i + 1];
+        const midX = (p0.x + p1.x) / 2;
+        const midY = (p0.y + p1.y) / 2;
+        ctx.quadraticCurveTo(p0.x, p0.y, midX, midY);
+        ctx.quadraticCurveTo(midX, midY, p1.x, p1.y);
+    }
+    ctx.stroke();
+
+    // --- 5. Draw Points on Line (Optional for detail) ---
+    ctx.fillStyle = isLight ? '#ffffff' : '#1e293b';
+    dataPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke(); // Stroke with current line color
+    });
+
+    // --- 6. Draw X-Axis Labels ---
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    ctx.fillStyle = textColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    dataPoints.forEach((p, i) => {
+        // Show label for every point, or skip if too crowded
+        if (i < months.length) {
+            ctx.fillText(months[i], p.x, height - padding + 10);
+        }
+    });
+
+    // X-Axis Title
+    ctx.fillText("Time (Months)", width / 2, height - 15);
 }
+
+if (canvas) {
+    drawChart();
+}
+
+window.updateChartData = function () {
+    chartData.shift();
+    chartData.push(getRandomInt(2, 18));
+    drawChart();
+}
+

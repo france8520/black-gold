@@ -64,6 +64,9 @@ body.light-mode .chat-item {
     border-radius: 50%;
     overflow: hidden;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .chat-item .avatar img {
