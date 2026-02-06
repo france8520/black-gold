@@ -443,3 +443,162 @@ if (usersFilterInput) {
     usersFilterInput.addEventListener('keyup', filterUsersTable);
 }
 
+// ================== Notification System ==================
+const notificationBtn = document.getElementById('notificationBtn');
+const notificationPanel = document.getElementById('notificationPanel');
+const notificationList = document.getElementById('notificationList');
+const notificationBadge = document.getElementById('notificationBadge');
+const markAllReadBtn = document.getElementById('markAllRead');
+
+// Sample notifications data
+let notifications = [
+    {
+        id: 1,
+        icon: 'information-circle',
+        iconClass: 'info',
+        title: 'New Order Received',
+        message: 'Order #ORD-156 has been placed by Sarah Smith',
+        time: '5 min ago',
+        read: false
+    },
+    {
+        id: 2,
+        icon: 'checkmark-circle',
+        iconClass: 'success',
+        title: 'Payment Confirmed',
+        message: 'Payment of $1,200 has been successfully processed',
+        time: '1 hour ago',
+        read: false
+    },
+    {
+        id: 3,
+        icon: 'warning',
+        iconClass: 'warning',
+        title: 'Low Stock Alert',
+        message: 'Nike Air Max inventory is running low (5 items left)',
+        time: '2 hours ago',
+        read: false
+    },
+    {
+        id: 4,
+        icon: 'person-add',
+        iconClass: 'info',
+        title: 'New User Registered',
+        message: 'Mike Ross has created a new account',
+        time: 'Yesterday',
+        read: true
+    },
+    {
+        id: 5,
+        icon: 'mail',
+        iconClass: 'info',
+        title: 'New Message',
+        message: 'You have a new message from Tech Support',
+        time: '2 days ago',
+        read: true
+    }
+];
+
+// Load notifications from localStorage if available
+const storedNotifications = localStorage.getItem('notifications');
+if (storedNotifications) {
+    notifications = JSON.parse(storedNotifications);
+}
+
+function saveNotifications() {
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+}
+
+function updateBadge() {
+    const unreadCount = notifications.filter(n => !n.read).length;
+    if (notificationBadge) {
+        if (unreadCount > 0) {
+            notificationBadge.textContent = unreadCount;
+            notificationBadge.classList.remove('hidden');
+        } else {
+            notificationBadge.classList.add('hidden');
+        }
+    }
+}
+
+function renderNotifications() {
+    if (!notificationList) return;
+
+    if (notifications.length === 0) {
+        notificationList.innerHTML = `
+            <div class="no-notifications">
+                <ion-icon name="notifications-off-outline"></ion-icon>
+                <p>No notifications</p>
+            </div>
+        `;
+        return;
+    }
+
+    notificationList.innerHTML = notifications.map(notif => `
+        <div class="notification-item ${notif.read ? '' : 'unread'}" data-id="${notif.id}">
+            <div class="notification-icon ${notif.iconClass}">
+                <ion-icon name="${notif.icon}"></ion-icon>
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">${notif.title}</div>
+                <div class="notification-message">${notif.message}</div>
+                <div class="notification-time">${notif.time}</div>
+            </div>
+        </div>
+    `).join('');
+
+    // Add click handlers to notification items
+    document.querySelectorAll('.notification-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const id = parseInt(item.dataset.id);
+            markAsRead(id);
+        });
+    });
+}
+
+function markAsRead(id) {
+    const notification = notifications.find(n => n.id === id);
+    if (notification && !notification.read) {
+        notification.read = true;
+        saveNotifications();
+        renderNotifications();
+        updateBadge();
+    }
+}
+
+function markAllAsRead() {
+    notifications.forEach(n => n.read = true);
+    saveNotifications();
+    renderNotifications();
+    updateBadge();
+}
+
+// Toggle notification panel
+if (notificationBtn) {
+    notificationBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notificationPanel.classList.toggle('active');
+    });
+}
+
+// Mark all as read button
+if (markAllReadBtn) {
+    markAllReadBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        markAllAsRead();
+    });
+}
+
+// Close panel when clicking outside
+document.addEventListener('click', (e) => {
+    if (notificationPanel && !notificationPanel.contains(e.target) && !notificationBtn.contains(e.target)) {
+        notificationPanel.classList.remove('active');
+    }
+});
+
+// Initialize notifications
+if (notificationList) {
+    renderNotifications();
+    updateBadge();
+}
+
