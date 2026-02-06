@@ -103,14 +103,14 @@
                         <a href="#" class="btn">Export</a>
                     </div>
                     <div class="table-controls">
-                        <input type="text" placeholder="Filter by status or customer...">
-                        <select
+                        <input type="text" id="ordersFilterInput" placeholder="Filter by status or customer...">
+                        <select id="ordersStatusFilter"
                             style="padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
-                            <option>All Status</option>
-                            <option>Delivered</option>
-                            <option>Pending</option>
-                            <option>Return</option>
-                            <option>In Progress</option>
+                            <option value="">All Status</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="pending">Pending</option>
+                            <option value="return">Return</option>
+                            <option value="in progress">In Progress</option>
                         </select>
                     </div>
 

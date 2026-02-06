@@ -374,3 +374,72 @@ if (topbarSearch) {
     });
 }
 
+// ================== Orders Page Filter Functionality ==================
+const ordersFilterInput = document.getElementById('ordersFilterInput');
+const ordersStatusFilter = document.getElementById('ordersStatusFilter');
+const ordersPageTableBody = document.getElementById('ordersPageTableBody');
+
+function filterOrdersTable() {
+    if (!ordersPageTableBody) return;
+
+    const searchTerm = ordersFilterInput ? ordersFilterInput.value.toLowerCase() : '';
+    const statusFilter = ordersStatusFilter ? ordersStatusFilter.value.toLowerCase() : '';
+
+    const rows = ordersPageTableBody.getElementsByTagName('tr');
+    Array.from(rows).forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const matchesSearch = text.includes(searchTerm);
+        const matchesStatus = !statusFilter || text.includes(statusFilter);
+
+        row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+    });
+}
+
+if (ordersFilterInput) {
+    ordersFilterInput.addEventListener('keyup', filterOrdersTable);
+}
+
+if (ordersStatusFilter) {
+    ordersStatusFilter.addEventListener('change', filterOrdersTable);
+}
+
+// ================== Products Page Filter Functionality ==================
+const productsFilterInput = document.getElementById('productsFilterInput');
+const productsTableBody = document.getElementById('productsTableBody');
+
+function filterProductsTable() {
+    if (!productsTableBody) return;
+
+    const searchTerm = productsFilterInput ? productsFilterInput.value.toLowerCase() : '';
+
+    const rows = productsTableBody.getElementsByTagName('tr');
+    Array.from(rows).forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+}
+
+if (productsFilterInput) {
+    productsFilterInput.addEventListener('keyup', filterProductsTable);
+}
+
+// ================== Users Page Filter Functionality ==================
+const usersFilterInput = document.getElementById('usersFilterInput');
+const usersTableBody = document.getElementById('usersTableBody');
+
+function filterUsersTable() {
+    if (!usersTableBody) return;
+
+    const searchTerm = usersFilterInput ? usersFilterInput.value.toLowerCase() : '';
+
+    const rows = usersTableBody.getElementsByTagName('tr');
+    Array.from(rows).forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+}
+
+if (usersFilterInput) {
+    usersFilterInput.addEventListener('keyup', filterUsersTable);
+}
+
