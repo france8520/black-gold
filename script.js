@@ -326,3 +326,51 @@ window.updateChartData = function () {
     drawChart();
 }
 
+// ================== Topbar Search Functionality ==================
+const topbarSearch = document.getElementById('topbarSearch');
+
+if (topbarSearch) {
+    topbarSearch.addEventListener('keyup', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+
+        // Dashboard page - search orders table
+        if (tableBody) {
+            const rows = tableBody.getElementsByTagName('tr');
+            Array.from(rows).forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Users page - search users table
+        const usersTableBody = document.getElementById('usersTableBody');
+        if (usersTableBody) {
+            const rows = usersTableBody.getElementsByTagName('tr');
+            Array.from(rows).forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Orders page - search orders table
+        const ordersPageTableBody = document.getElementById('ordersPageTableBody');
+        if (ordersPageTableBody) {
+            const rows = ordersPageTableBody.getElementsByTagName('tr');
+            Array.from(rows).forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Products page - search products table
+        const productsTableBody = document.getElementById('productsTableBody');
+        if (productsTableBody) {
+            const rows = productsTableBody.getElementsByTagName('tr');
+            Array.from(rows).forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+    });
+}
+
